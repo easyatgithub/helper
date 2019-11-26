@@ -1,0 +1,15 @@
+.vscode/
+.DS_Store
+
+auto/package-lock.json
+auto/node_modules/
+auto/build/
+auto/dist/
+auto/log/
+
+sc/package-lock.json
+sc/node_modules/
+sc/build/
+sc/dist/
+sc/log/
+ 
