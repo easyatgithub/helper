@@ -56,6 +56,8 @@
 
 <script>
 import axios from 'axios';
+import bobi from "../../utils/bobi";
+const { remote, ipcRenderer } = window.require("electron");
 
 export default {
   name: 'login',
@@ -81,6 +83,12 @@ export default {
   }),
   methods: {
     async login() {
+        await  bobi.db('123')
+          await bobi.insert({s:'123'})
+          console.log(bobi,remote.app.db)
+          
+    },
+    async login1() {
       try {
         if (!this.selectedURL) {
           this.showAlert('error', 'Login Fail', 'Please select URL.');
@@ -97,7 +105,7 @@ export default {
           this.$emit('loginSuccessed');
         } else {
           this.showAlert(
-            'error',
+            'error',g
             'Login Fail',
             'Please check your name and password',
           );

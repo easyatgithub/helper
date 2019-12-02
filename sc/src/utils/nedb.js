@@ -117,4 +117,7 @@ DB.prototype.remove = function (query, options) {
 };
 
 
-module.exports = database => new DB(database);
+// module.exports = database => new DB(database);
+export function database() {
+  return new DB(database)
+}
