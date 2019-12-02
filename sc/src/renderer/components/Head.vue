@@ -8,7 +8,7 @@
  
     <el-tabs style="height: 200px;">
     <el-tab-pane label="文件夹风格">
-      <Page1/>
+      <Page3/>
     </el-tab-pane>
     <el-tab-pane label="瀑布流风格">
       <Page2/>

@@ -22,14 +22,22 @@
       <div class="swiper-pagination "  slot="pagination"></div>
       <div class="swiper-button-prev swiper-button-black" slot="button-prev"></div>
       <div class="swiper-button-next swiper-button-black" slot="button-next"></div>
+
       <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
     </swiper> 
+      <swiper :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs" v-if="openThumbs">
+          <swiper-slide v-for="(e ,index) in list">
+              <img :src="e.src" alt="banner" v-on:click='chooseImg(index)' />
+          </swiper-slide>          
+        </swiper>
 
      </div>
           <!--/ppt -->
           </el-col>
 
           <el-col  :span="4">
+           <el-button type="primary" v-model="opemStr" v-on:click='open' v-if="openThumbs">{{ opemStr }}</el-button>
+           <el-button type="primary" v-model="opemStr" v-on:click='open' v-if="!openThumbs"> 关闭缩略图</el-button>
            <div> 
               {{ curImg.text}}
               <el-input
@@ -82,6 +90,16 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
         ],
         input: 'first',
         curImg: {},
+        openThumbs:false,
+        opemStr:"打开缩略图",
+         swiperOptionThumbs: {
+          spaceBetween: 10,
+          slidesPerView: 4,
+          touchRatio: 0.2,
+          loop: true,
+          loopedSlides: 5, //looped slides should be the same
+          slideToClickedSlide: true,
+        },
         swiperOption: {  
           _this :this,
           autoplay: {
@@ -136,6 +154,14 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       test(tab, event) {
       
       },
+      open(tab, event) {
+       console.log()
+       console.log(111111111) 
+       this.openThumbs = !this.openThumbs;
+       this.openStr = this.openThumbs==true  ?"打开缩略图":"关闭缩略图"
+       console.log(111111111) 
+       console.log(this.openStr ,this.openThumbs )
+      },
       chooseImg(index){
        console.log()
        this.curImg = this.list[index]
@@ -145,6 +171,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       //通过获得的swiper对象来暂停自动播放
             on_top_enter() { 
                 this.swiper.autoplay.stop()
+                this.myBotSwiper.autoplay.stop()
             },
             on_top_leave() { 
                 this.swiper.autoplay.start()
@@ -156,7 +183,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       return this.$refs.mySwiper.swiper;  
     }  ,
             myBotSwiper() {
-                return this.$refs.myBotSwiper.swiper
+                return this.$refs.swiperThumbs.swiper
             } 
   }, 
      mounted() {
@@ -164,6 +191,10 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
        this.list = this.list.concat(this.list)
        this.list = this.list.concat(this.list)
        this.curImg = this.list[0]
+        const swiperTop = this.$refs.mySwiper.swiper
+        const swiperThumbs = this.$refs.swiperThumbs.swiper
+        swiperTop.controller.control = swiperThumbs
+        swiperThumbs.controller.control = swiperTop
      }
   };
 </script>
@@ -204,12 +235,19 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
         width: 100%;
     }
  
-.swiper-slide{
+.swiper-slide-top{
   height:500px;
     overflow :auto;
      max-width: 100%;
     height: 500px;
 }
+.swiper-slide-botton{
+  height:500px;
+    overflow :auto;
+     max-width: 100%;
+    height: 500px;
+}
+
 
  .overflow-auto{
     overflow :auto;
