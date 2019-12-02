@@ -2,15 +2,20 @@
 <div>
 4
 
-
+  <el-button
+            type="primary"
+            @click="test"
+          >test</el-button>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from 'moment'; 
-import { initTable } from '../../utils/nedb'
+ 
 import './css.css' /*引入公共样式*/
+
+import db from "../../utils/db";
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   export default {
@@ -22,10 +27,34 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
     },
       
     methods: {
-      handleClick(tab, event) {
+     async test(tab, event) {
         console.log(tab, event);
+
+         await this.find()
+
+
       },
       
+      async insert(){
+        var s = await db.insert({s:'123'})
+        console.log(s)
+      },
+      async find(){
+        var s = await db.find({ number: { $gt: 12 } });
+        console.log(s)
+      },
+      async update(){
+        var s = await db.insert({s:'123'})
+        console.log(s)
+      },
+      async remove(){
+        var s = await db.remove({s:'123'})
+        console.log(s)
+      },
+    
+       handleClick(tab, event) {
+        console.log(tab, event);
+      },
     }
   };
 </script>

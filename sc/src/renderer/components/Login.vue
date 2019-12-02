@@ -56,7 +56,7 @@
 
 <script>
 import axios from 'axios';
-import bobi from "../../utils/bobi";
+import db from "../../utils/db";
 const { remote, ipcRenderer } = window.require("electron");
 
 export default {
@@ -82,10 +82,7 @@ export default {
     ],
   }),
   methods: {
-    async login() {
-        await  bobi.db('123')
-          await bobi.insert({s:'123'})
-          console.log(bobi,remote.app.db)
+    async login() { 
           
     },
     async login1() {

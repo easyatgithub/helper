@@ -1,15 +1,25 @@
 const Datastore = require('nedb');
 export default {
     name :"bobi",
-    DB:null,
-    db(database) {
+    db:null,
+   async init(database) {
     const options = {
       filename: database,
       autoload: true,
     };
     console.log(1) 
-   this.db = new Datastore(options);
-  },
+    var db = new Datastore(options);
+    this.db=db;
+    var obj = { objName: "folder", objValue: {} };
+    db.find({ objName: "folder" }, function(err, data) {
+        console.log(data);
+        if (!data.length) {
+            db.insert(obj, function(err, data) {
+            console.log(data);
+          });
+        }
+      }); 
+   },
   limit (offset, limit) {
     this.offset = offset || 0;
     this.limit = limit || 15;
@@ -61,16 +71,19 @@ export default {
   },
    
   insert  (values) {
+    console.log(1 ,this.db,values) 
     return new Promise((resolve, reject) => {
-        console.log(11) 
+        console.log(1 ,this.db) 
       this.db.insert(values, (err, newDoc) => {
         if (err) {
+            console.log(err) 
           return reject(err);
         }
         resolve(newDoc);
       });
     });
   },
+ 
    
   update  (query, values, options) {
     return new Promise((resolve, reject) => {

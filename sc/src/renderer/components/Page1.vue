@@ -97,6 +97,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       
     },
      mounted() {
+       console.log("page1",this.globalData)
        this.list = this.list.concat(this.list)
        this.list = this.list.concat(this.list)
        this.list = this.list.concat(this.list)

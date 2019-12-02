@@ -6,9 +6,9 @@
   <el-col :span="23"> 
    
  
-    <el-tabs style="height: 200px;">
+    <el-tabs style="height: 200px;" @tab-click="handleClick">
     <el-tab-pane label="文件夹风格">
-      <Page3/>
+      <Page1/>
     </el-tab-pane>
     <el-tab-pane label="瀑布流风格">
       <Page2/>
@@ -58,6 +58,14 @@ import Page2 from '@/components/Page2';
 import Page3 from '@/components/Page3';
 import Page4 from '@/components/Page4';
 import './css.css' /*引入公共样式*/
+
+import db from "../../utils/db";
+import globalData from "../globalData";
+const { remote, ipcRenderer } = window.require("electron");
+
+      const fs = require("fs");
+      const sizeOf = require("image-size");
+
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   export default {
     data() {
@@ -65,6 +73,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
          drawer: false,
         activeName: 'first',
         input: 'first',
+        list:[]
       };
     },
       components: {
@@ -76,20 +85,92 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
+        var all = JSON.parse(localStorage.getItem('all'));
+        console.log("all")
+        console.log(all)
+        console.log(all,this.globalData)
+        this.globalData.setData(all)
+        console.log(all,this.globalData)
       },
       async test(tab, event) {
-          const { remote } = window.require('electron')
+       ipcRenderer.send("open-file-dialog");
        
-       var db = remote.app.db
-       db.find({n:1}, function (err, newDoc) {   // Callback is optional
-         console.log(newDoc)
-        });
       },
       async test1( ) {
        
       },
     }
   };
+
+  /////////////////////
+
+ipcRenderer.on("selected-directory", async (event, path) => {
+  console.log(path);
+    const name = path[0].slice(path[0].lastIndexOf("/") + 1);
+    var items = getFileList(name);
+    console.log(items);
+    var data = await db.find({ objName: "folder" })
+    console.log(data);
+    var forderValue = data[0].objValue;
+      var firstTime = null;
+      console.log(data[0], forderValue.hasOwnProperty(name));
+      if (forderValue.hasOwnProperty(name)) {
+        console.log("再次打开这个文件夹");
+        firstTime = forderValue[name].firstTime;
+        console.log(firstTime);
+      }
+      forderValue[name] = {
+        firstTime: firstTime || Date.now(),
+        lasrTime: Date.now(),
+        items: items
+      };
+      console.log("新的值");
+      forderValue = JSON.parse(JSON.stringify(forderValue)); // nedb 的bug 不能使用原对象需要 深拷贝
+      console.log(forderValue, this); 
+      localStorage.setItem('all',JSON.stringify({ objName: "folder", objValue: forderValue}));
+     data = await db.update(  { objName: "folder" },{ $set: { objValue: forderValue } },{ multi: true },)
+    console.log(data);
+
+})
+
+  /////////////////
+  function getFileList(path){
+    var s=[]
+   readFileList (path,s) 
+   return s
+  }
+  
+
+  function readFileList(path, filesList) {
+    var files = fs.readdirSync(path);
+    console.log(files);
+    files.forEach(function(itm, index) {
+      var stat = fs.statSync(path + "/" + itm);
+      if (stat.isDirectory()) {
+        readFileList(path + "/" + itm + "/", filesList);
+      } else {
+        var obj = {}; //定义一个对象存放文件的路径和名字
+        obj.path = path; //路径
+        obj.filename = itm; //名字
+
+        var suffix = itm.substr(itm.length - 4).toLowerCase();
+        if (
+          suffix === ".png" ||
+          suffix === ".png" ||
+          suffix === ".ico" ||
+          suffix === ".gif" ||
+          suffix === ".jpg"
+        ) {
+          var dimensions = sizeOf(obj.path + "/" + obj.filename);
+          obj.width = dimensions.width;
+          obj.height = dimensions.height;
+          obj.type = "img";
+          filesList.push(obj);
+        }
+      }
+    });
+  }
+
 </script>
 
  
