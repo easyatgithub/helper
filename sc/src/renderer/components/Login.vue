@@ -105,7 +105,7 @@ export default {
           this.$emit('loginSuccessed');
         } else {
           this.showAlert(
-            'error',g
+            'error',
             'Login Fail',
             'Please check your name and password',
           );

@@ -1,13 +1,15 @@
 <template>
   <div id="app">
     <login v-on:loginSuccessed="handleLoginSuccessed" v-if="!isLoggedIn"/>
-    <bank-information v-if="isLoggedIn"/>
+    <bank-information v-if="!isLoggedIn"/>
+    <Head  v-if="isLoggedIn"/>
   </div>
 </template>
 
 <script>
   import Login from '@/components/Login';
   import BankInformation from '@/components/BankInformation';
+  import Head from '@/components/Head';
 
   export default {
     name: 'session-capture',
@@ -18,9 +20,10 @@
     components: {
       BankInformation,
       Login,
+      Head,
     },
     data: () => ({
-      isLoggedIn: false,
+      isLoggedIn: true,
     }),
     methods: {
       handleLoginSuccessed() {
