@@ -1,3 +1,40 @@
+/*
+
+app 数据结构的定义
+
+整体对象是一个json   db 里面暂时只存一个json
+{
+
+objectName:"forder",
+objectValue:[
+        {
+        forderName:"ff",
+            items:[
+                {
+                    src:"",
+                    text:"",
+                    time:"",
+                    lastTime:"",
+                }
+            ],
+        },{
+        forderName:"bobi",
+            items:[
+                {
+                    src:"",
+                    text:"",
+                    time:"",
+                    lastTime:"",
+                }
+            ],
+        },
+   ],
+
+}
+
+
+*/
+
 // const { remote, ipcRenderer } = window.require("electron");
 
 // const fs = require("fs");
