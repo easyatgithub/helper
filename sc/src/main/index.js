@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron' // eslint-disable-line
-
+const electron = require("electron");
+const ipc = require("electron").ipcMain;
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -17,10 +18,25 @@ function createWindow() {
   /**
    * Initial window options
    */
+  var size = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    height: 563,
+    x: size.width * 0,
+    y: 0,
+    width: size.width * 1,
+    height: size.height * 1.2,
+    fullscreen: false,
+    resizable: true,
+    webPreferences: {
+      javascript: true,
+      plugins: true,
+      title: 'feng',
+      webSecurity: false,
+      nodeIntegration: true, //  Nodejs  模块 影响到 jquery
+      devTools: true
+    }, 
     useContentSize: true,
-    width: 1000,
+    
+     
   });
 
   mainWindow.loadURL(winURL);
@@ -42,6 +58,18 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+ipc.on("open-file-dialog", function(event) {
+  dialog.showOpenDialog(
+    {
+      properties: ["openFile", "openDirectory"]
+    },
+    function(files) {
+      console.log(files);
+      if (files) event.sender.send("selected-directory", files);
+    }
+  );
 });
 
 /**
