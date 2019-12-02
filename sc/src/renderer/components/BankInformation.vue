@@ -202,7 +202,7 @@
 <script>
 import axios from 'axios';
 import moment from 'moment';
-import BankRules from '../../bankRules';
+import BankRules from '../../workers';
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
