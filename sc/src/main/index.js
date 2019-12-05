@@ -28,14 +28,16 @@ function createWindow() {
   /**
    * Initial window options
    */
+  
   var size = electron.screen.getPrimaryDisplay().workAreaSize;
+  console.log(size.height*1.5,size.height * 1.1,size.height * 1.2)
   mainWindow = new BrowserWindow({
     x: size.width * 0,
     y: 0,
     width: size.width * 1,
-    height: size.height * 1.2,
-    fullscreen: false,
-    resizable: true,
+    height:size.height  ,// Math.floor(* 1),
+    fullscreen: true,
+    resizable: false,    // 上面参数用于客户化设置
     webPreferences: {
       javascript: true,
       plugins: true,
@@ -81,7 +83,10 @@ ipc.on("open-file-dialog", function(event) {
     }
   );
 });
-
+ipc.on("broadcasting", function(event,arg) {
+  console.log(arg);
+   event.sender.send("broadcasting", arg);
+});
 /**
  * Auto Updater
  *

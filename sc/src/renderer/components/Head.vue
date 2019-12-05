@@ -88,9 +88,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
         var all = JSON.parse(localStorage.getItem('all'));
         console.log("all")
         console.log(all)
-        console.log(all,this.globalData)
-        this.globalData.setData(all)
-        console.log(all,this.globalData)
+        this.COMMON.data=all 
       },
       async test(tab, event) {
        ipcRenderer.send("open-file-dialog");

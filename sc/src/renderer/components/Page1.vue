@@ -3,47 +3,47 @@
  
 
 
- <el-col  :span="2">
-     <div class="forder">
-                        <button> <i class="glyphicon glyphicon-folder-open"></i> FF</button><br>
-                        <span class="path">D://PATH</span>
-                     </div>
+ <el-col  :span="2" class="list">
+<div class="list">
+          <div  :class="activeClass == index ? 'active':''"  v-for="(e ,index) in list" v-on:click='folder(index)'>
+                <i class="custom-icon el-icon-folder-checked"></i>
+                <span class="path" title="e.src"> {{e.text}} </span> 
+            </div>  
+              </div>              
 </el-col>
- <el-col  :span="4">
-        
-        <div class="list2">
-       <div class="imglist" v-for="(e ,index) in list">
+
+ <el-col  :span="4">        
+         <div class="list2">
+         <div class="imglist" v-for="(e ,index) in list">
                       <div class="item">
-                          <div class="item-content">
-                            <img :src="e.src"  :data-text="e.text"  v-on:click='chooseImg(index)' />
+                          <div class="item-content"> 
+                            <img :src="e.src"  :data-text="e.text"  v-on:click='chooseImg(index,1)'  @mouseenter="chooseImg(index,0)"/>
                           </div>
                         </div> 
             </div>
            </div>    
 </el-col>
 
- <el-col  :span="13">
-<!--cur -->
-            <div class="curImg">
+
+          <el-col  :span="13">
+          <!--cur -->
+             <div class="curImg">
                      <img :src="curImg.src"  :data-text="curImg.text"/>
               </div>
           <!--/cur -->
           </el-col>
 
           <el-col  :span="4">
-          <el-button
-            type="primary"
-            @click="test"
-          >test</el-button>
+          <el-button type="primary"@click="openHover">开启hover</el-button>
+          <el-button type="primary"@click="test">滚动播放</el-button>
+          <el-button type="primary"@click="test">{{switchName}}</el-button>
+  
+                <el-switch class="switchStyle" v-model="hover" active-color="#7958b5" active-text="开" 
+                 inactive-color="#e8e4f3" inactive-text="关">
+                </el-switch> 
 
-           <div> 
-              {{ curImg.text}}
-              <el-input
-  type="textarea"
-  :rows="20"
-  placeholder="请输入内容"
-  v-model="curImg.text">
-</el-input>
+           <div>  {{ curImg.text}}
+              <el-input type="textarea" :rows="20" placeholder="请输入内容" v-model="curImg.text"> </el-input>
            </div>
            </el-col>
 
@@ -61,6 +61,9 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
    export default {
     data() {
       return {
+        hover:true,
+         switchName: '12' ,
+        activeClass :0,
         list :[
          {
            src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
@@ -72,7 +75,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
          },
          {
            src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"3",
+           text:"3sssssssssssssssssssssssssssssssssssssssssssssssssssssssss11111111111111111111111111111111111222222222222222222222222222",
          },
          {
            src:'https://picjumbo.com/wp-content/uploads/lago-di-braies-morning-2210x1473.jpg',
@@ -86,11 +89,32 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       
     methods: {
       test(tab, event) {
-      
+      this.switchName="111111111111111"
       },
-      chooseImg(index){
+      openHover(tab, event) {
+      this.hover = !this.hover ;
+      },
+        showName() {
+      return this.switchName === '1' ? '开启' : '关闭'
+    },
+       
+      folder(index){
        console.log()
-       this.curImg = this.list[index]
+       this.activeClass = index;
+       console.log(index)
+      },
+
+      chooseImg(index,kind){
+       console.log()
+       if(kind){
+         this.curImg = this.list[index]
+       } else{
+         if(this.hover){
+            this.curImg = this.list[index]
+         }
+       }
+
+
        console.log(this.list[index].text)
        console.log(index)
       },
@@ -109,6 +133,16 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
  
 
 <style lang="scss" scoped>
+.path{
+  width:50px;
+     display: inline-block; overflow: hidden; text-overflow:ellipsis; white-space: nowrap;
+}
+.active {
+  /* background: #eee; */
+  color: #1e82d2;
+  font-weight: bolder;
+   border: #1e82d2 1px solid; border-radius: 5px;
+}
 .list2{
     overflow :auto;
      max-width: 100%;
@@ -120,4 +154,27 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
     max-width: 100%;
     max-height: 100%;
   }
+
+ .switchStyle .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+.switchStyle .el-switch__label--left {
+  z-index: 9;
+  left: 6px;
+}
+.switchStyle .el-switch__label--right {
+  z-index: 9;
+  left: -14px;
+}
+.switchStyle .el-switch__label.is-active {
+  display: block;
+}
+.switchStyle.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 50px !important;
+}
+
+
 </style>

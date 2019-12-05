@@ -35,6 +35,7 @@
           </el-col>
 
           <el-col  :span="4">
+           <el-button plain circle icon="custom-icon el-icon-refresh"></el-button>
            <div> 
               {{ curImg.text}}
               <el-input

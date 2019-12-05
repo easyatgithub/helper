@@ -192,10 +192,10 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
        this.list = this.list.concat(this.list)
        this.list = this.list.concat(this.list)
        this.curImg = this.list[0]
-        const swiperTop = this.$refs.mySwiper.swiper
-        const swiperThumbs = this.$refs.swiperThumbs.swiper
-        swiperTop.controller.control = swiperThumbs
-        swiperThumbs.controller.control = swiperTop
+        // const swiperTop = this.$refs.mySwiper.swiper
+        // const swiperThumbs = this.$refs.swiperThumbs.swiper
+        // swiperTop.controller.control = swiperThumbs
+        // swiperThumbs.controller.control = swiperTop
      }
   };
 </script>

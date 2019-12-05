@@ -16,6 +16,12 @@ import moment from 'moment';
 import './css.css' /*引入公共样式*/
 
 import db from "../../utils/db";
+const { remote, ipcRenderer } = window.require("electron");
+ipcRenderer.on("broadcasting", function(event,arg) {
+  console.log(this);
+  console.log(arg);
+   // event.sender.send("broadcasting", arg);  //  死循环
+});
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   export default {
@@ -27,10 +33,9 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
     },
       
     methods: {
-     async test(tab, event) {
-        console.log(tab, event);
-
-         await this.find()
+     async test(tab, event) { 
+         this.COMMON.httpUrl = this.COMMON.httpUrl+"ok"
+         ipcRenderer.send("broadcasting",{s: this.COMMON.httpUrl})
 
 
       },

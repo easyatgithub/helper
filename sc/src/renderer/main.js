@@ -8,7 +8,7 @@ import App from './App';
 
 import bobi from "../utils/db";
 
-
+import globalData from "./globalData";
 
 
 
@@ -19,7 +19,7 @@ Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
 
-
+// Vue.prototype.globalData = globalData;
 
 
 /* eslint-disable no-new */
@@ -28,13 +28,15 @@ new Vue({
   template: '<App/>',
 }).$mount('#app');
 
-import globalData from "./globalData";
-Vue.prototype.globalData = globalData;
+
+
 var all = JSON.parse(localStorage.getItem('all'));
 console.log("all")
 console.log(all)
-console.log(all,this.globalData)
-this.globalData.setData(all)
+// console.log(all,this.globalData)
+//this.globalData.setData(all)
 
+import global from './components/common.vue'
+Vue.prototype.COMMON = global
 
 bobi.init(moment().format('YYYY-MM-DD'))

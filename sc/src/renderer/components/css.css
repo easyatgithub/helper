@@ -1,0 +1,8 @@
+.custom-icon {
+    font-size: 2rem;
+ }
+ .list{
+    overflow :auto;
+    max-width: 100%;
+   height: 500px;
+ }
