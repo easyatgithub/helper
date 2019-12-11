@@ -1,41 +1,44 @@
 <template>
 <div>
 
-<el-col  :span="2">
-     <div class="forder">
-                        <button> <i class="glyphicon glyphicon-folder-open"></i> FF</button><br>
-                        <span class="path">D://PATH</span>
-                     </div>
+
+ <el-col  :span="2" class="list">
+<div class="list">
+          <div  :class="activeClass == index ? 'active':''"  v-for="(e ,index) in list" v-on:click='folder(index)'>
+                <i class="custom-icon el-icon-folder-checked"></i>
+                <span class="path" title="e.src"> {{e.forderName}} </span> 
+            </div>  
+              </div>              
 </el-col>
+
 
  <el-col  :span="18">
 <!--flow -->
+ 
+
+  </el-popover>
           <div class="overflow-auto">
           <div class="waterfall">
 
-    <div class="item">
-                <div class="item-content">
-                  <img
-                    src="https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg"
-                  />
-                </div>
-              </div>           
-
-            <div v-for="(e ,index) in list">
+            <div v-for="(e ,index) in itemList">
                       <div class="item">
                           <div class="item-content">
-                            <img :src="e.src"  :data-text="e.text"  v-on:click='chooseImg(index)' />
+                            <img :src="e.path + '\\' +e.filename"  :data-text="e.filename"  v-on:click='chooseImg(index)' />
                           </div>
                         </div> 
             </div>
 
            </div>
           </div>
+          <viewer :images="fullScreenImgs" style="height: 300px;"  v-if="isFullScreen">
+             <img v-for="item in fullScreenImgs"  :src="item.path + '\\' +item.filename"   :key="item.index" height="100">
+          </viewer> 
+
           <!--/flow -->
           </el-col>
 
           <el-col  :span="4">
-           <el-button plain circle icon="custom-icon el-icon-refresh"></el-button>
+           <el-button plain circle icon="custom-icon el-icon-refresh" v-on:click='test()'></el-button>
            <div> 
               {{ curImg.text}}
               <el-input
@@ -62,24 +65,12 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   export default {
     data() {
       return {
-        list :[
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"1",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"2",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"3",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"124",
-         },
-        ],
+        data :this.$store.state,
+        activeClass :0,
+        list : this.$store.state.folders,
+        itemList:[],
+        isFullScreen:false,
+        fullScreenImgs:[],
         input: 'first',
         curImg: {},
       };
@@ -87,34 +78,47 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       
     methods: {
       test(tab, event) {
-      
+      console.log()
+      console.log(this.data,)
+       
+        
       },
       chooseImg(index){
-       console.log()
-       this.curImg = this.list[index]
-       console.log(this.list[index].text)
+       console.log(this.itemList)
+       this.curImg = this.itemList[index]
+       console.log(this.itemList[index].text)
        console.log(index)
+       this.isFullScreen = true;
+        // this.fullScreenImgs =this.itemList
+       this.fullScreenImgs = this.itemList.slice(index,this.itemList.length).concat(this.itemList.slice(0,index))
+
+
       },
+      folder(index){
+       console.log(index)
+       this.activeClass = index;
+       this.itemList = this.list[index].items
+       console.log( this.itemList)
+        this.isFullScreen = false;
+      },
+
       
     },
      mounted() {
-       this.list = this.list.concat(this.list)
-       this.list = this.list.concat(this.list)
-       this.list = this.list.concat(this.list)
-       this.curImg = this.list[0]
+       
+       console.log("page2") 
+    console.log(this.list,)
+        
+       this.itemList = this.list[0].items
+           console.log(this.itemList,)
      }
   };
 </script>
-
- 
-
 <style lang="scss" scoped>
- 
   .waterfall {
     column-count: 4;
     column-gap: 0;
   }
-
   .item {
     break-inside: avoid;
     padding: 10px;

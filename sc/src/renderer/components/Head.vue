@@ -83,12 +83,14 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       Page4,
     },
     methods: {
+      // tab 切换的的时候会从全局数据里面更新文件夹
       handleClick(tab, event) {
         console.log(tab, event);
         var all = JSON.parse(localStorage.getItem('all'));
         console.log("all")
         console.log(all)
         this.COMMON.data=all 
+        
       },
       async test(tab, event) {
        ipcRenderer.send("open-file-dialog");
@@ -103,31 +105,27 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   /////////////////////
 
 ipcRenderer.on("selected-directory", async (event, path) => {
-  console.log(path);
     const name = path[0].slice(path[0].lastIndexOf("/") + 1);
     var items = getFileList(name);
-    console.log(items);
     var data = await db.find({ objName: "folder" })
-    console.log(data);
     var forderValue = data[0].objValue;
-      var firstTime = null;
-      console.log(data[0], forderValue.hasOwnProperty(name));
+      var firstTime =  Date.now();
+      // 
+      console.log(data[0]._id, forderValue.hasOwnProperty(name));
       if (forderValue.hasOwnProperty(name)) {
         console.log("再次打开这个文件夹");
         firstTime = forderValue[name].firstTime;
-        console.log(firstTime);
       }
+      // for forder update items
       forderValue[name] = {
-        firstTime: firstTime || Date.now(),
+        firstTime: firstTime ,
         lasrTime: Date.now(),
         items: items
       };
       console.log("新的值");
       forderValue = JSON.parse(JSON.stringify(forderValue)); // nedb 的bug 不能使用原对象需要 深拷贝
-      console.log(forderValue, this); 
       localStorage.setItem('all',JSON.stringify({ objName: "folder", objValue: forderValue}));
-     data = await db.update(  { objName: "folder" },{ $set: { objValue: forderValue } },{ multi: true },)
-    console.log(data);
+      data = await db.update( {_id:data[0]._id},{ $set: { objValue: forderValue } },{ multi: false},)
 
 })
 
@@ -141,7 +139,6 @@ ipcRenderer.on("selected-directory", async (event, path) => {
 
   function readFileList(path, filesList) {
     var files = fs.readdirSync(path);
-    console.log(files);
     files.forEach(function(itm, index) {
       var stat = fs.statSync(path + "/" + itm);
       if (stat.isDirectory()) {

@@ -7,17 +7,17 @@
 <div class="list">
           <div  :class="activeClass == index ? 'active':''"  v-for="(e ,index) in list" v-on:click='folder(index)'>
                 <i class="custom-icon el-icon-folder-checked"></i>
-                <span class="path" title="e.src"> {{e.text}} </span> 
+                <span class="path" title="e.src"> {{e.forderName}} </span> 
             </div>  
               </div>              
 </el-col>
 
  <el-col  :span="4">        
          <div class="list2">
-         <div class="imglist" v-for="(e ,index) in list">
+         <div class="imglist" v-for="(e ,index) in itemList">
                       <div class="item">
                           <div class="item-content"> 
-                            <img :src="e.src"  :data-text="e.text"  v-on:click='chooseImg(index,1)'  @mouseenter="chooseImg(index,0)"/>
+                            <img  :src="e.path + '\\' +e.filename"   :data-text="e.text"  v-on:click='chooseImg(index,1)'  @mouseenter="chooseImg(index,0)"/>
                           </div>
                         </div> 
             </div>
@@ -28,7 +28,7 @@
           <el-col  :span="13">
           <!--cur -->
              <div class="curImg">
-                     <img :src="curImg.src"  :data-text="curImg.text"/>
+                     <img   :src="curImg.path + '\\' +curImg.filename"  :data-text="curImg.text"/>
               </div>
           <!--/cur -->
           </el-col>
@@ -62,28 +62,13 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
     data() {
       return {
         hover:true,
-         switchName: '12' ,
+        switchName: '12' ,
         activeClass :0,
-        list :[
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"1",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/lago-di-braies-morning-2210x1473.jpg',
-           text:"2",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"3sssssssssssssssssssssssssssssssssssssssssssssssssssssssss11111111111111111111111111111111111222222222222222222222222222",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/lago-di-braies-morning-2210x1473.jpg',
-           text:"124",
-         },
-        ],
-        input: 'first',
+        list : this.$store.state.folders,
+        itemList:[],
         curImg: {},
+        input: 'first',
+        
       };
     },
       
@@ -101,31 +86,34 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       folder(index){
        console.log()
        this.activeClass = index;
-       console.log(index)
+       this.itemList = this.list[index].items
+       console.log( this.itemList)
       },
 
       chooseImg(index,kind){
        console.log()
        if(kind){
-         this.curImg = this.list[index]
+         this.curImg = this.itemList[index]
        } else{
          if(this.hover){
-            this.curImg = this.list[index]
+            this.curImg = this.itemList[index]
          }
        }
 
 
-       console.log(this.list[index].text)
+       console.log(this.itemList[index].text)
        console.log(index)
       },
       
     },
      mounted() {
-       console.log("page1",this.globalData)
-       this.list = this.list.concat(this.list)
-       this.list = this.list.concat(this.list)
-       this.list = this.list.concat(this.list)
-       this.curImg = this.list[0]
+      console.log("page1",this.globalData)
+      //  this.list = this.list.concat(this.list)
+      //  this.list = this.list.concat(this.list)
+      //  this.list = this.list.concat(this.list)
+        this.itemList = this.list[0].items
+        console.log(this.itemList,)
+       this.curImg = this.itemList[0]
      }
   };
 </script>
@@ -137,17 +125,7 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   width:50px;
      display: inline-block; overflow: hidden; text-overflow:ellipsis; white-space: nowrap;
 }
-.active {
-  /* background: #eee; */
-  color: #1e82d2;
-  font-weight: bolder;
-   border: #1e82d2 1px solid; border-radius: 5px;
-}
-.list2{
-    overflow :auto;
-     max-width: 100%;
-    height: 500px;
-}
+
 .forder{ width: 100px;height: 70px;margin: 5px; border: #000 1px solid; border-radius: 5px;}
 .imglist{ width: 100%;height: 70px;}
    img {

@@ -1,8 +1,20 @@
 .custom-icon {
-    font-size: 2rem;
- }
- .list{
+   font-size: 2rem;
+}
+.list{
+   overflow :auto;
+   max-width: 100%;
+  height: 500px;
+}
+
+.active {
+  /* background: #eee; */
+  color: #1e82d2;
+  font-weight: bolder;
+   border: #1e82d2 1px solid; border-radius: 5px;
+}
+.list2{
     overflow :auto;
-    max-width: 100%;
-   height: 500px;
- }
+     max-width: 100%;
+    height: 500px;
+}

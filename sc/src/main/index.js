@@ -36,7 +36,7 @@ function createWindow() {
     y: 0,
     width: size.width * 1,
     height:size.height  ,// Math.floor(* 1),
-    fullscreen: true,
+    fullscreen: false,
     resizable: false,    // 上面参数用于客户化设置
     webPreferences: {
       javascript: true,
