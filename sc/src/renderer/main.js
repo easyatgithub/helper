@@ -104,12 +104,12 @@ const store = new Vuex.Store({
         items:[
           {
             path:'D:\\FF3\\',
-            filename:"ccb.gif",
+            filename:"a.png",
             text:"2222222222 ccb.gif",
           },
           {
             path:'D:\\FF3\\',
-            filename:"ccb.gif",
+            filename:"b.png",
             text:"22 ccb.gif",
           },
         ]
@@ -119,17 +119,17 @@ const store = new Vuex.Store({
         items:[
           {
             path:'D:\\FF3\\',
-            filename:"ccb.gif",
+            filename:"c.png",
             text:"33 ccb.gif",
           },
           {
             path:'D:\\FF3\\',
-            filename:"ccb.gif",
+            filename:"d.png",
             text:"32 ccb.gif",
           },
           {
             path:'D:\\FF3\\',
-            filename:"ccb.gif",
+            filename:"e.png",
             text:"33 ccb.gif",
           },
         ]

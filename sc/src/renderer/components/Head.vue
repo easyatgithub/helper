@@ -7,14 +7,16 @@
    
  
     <el-tabs style="height: 200px;" @tab-click="handleClick">
-    <el-tab-pane label="文件夹风格">
-      <Page1/>
+    <el-tab-pane label="幻灯片风格"> 
+    
+    <Page1/>
     </el-tab-pane>
     <el-tab-pane label="瀑布流风格">
       <Page2/>
     </el-tab-pane>
-    <el-tab-pane label="幻灯片风格"> 
-    <Page3/>
+    
+    <el-tab-pane label="文件夹风格">
+      <Page3/>
     </el-tab-pane>
     <el-tab-pane label="管理界面"> 
     <Page4/>

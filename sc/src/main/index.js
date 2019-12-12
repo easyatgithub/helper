@@ -37,7 +37,7 @@ function createWindow() {
     width: size.width * 1,
     height:size.height  ,// Math.floor(* 1),
     fullscreen: false,
-    resizable: false,    // 上面参数用于客户化设置
+    resizable: true,    // 上面参数用于客户化设置
     webPreferences: {
       javascript: true,
       plugins: true,
@@ -50,7 +50,7 @@ function createWindow() {
     
      
   });
-
+  mainWindow.webContents.openDevTools({ mode: "detach" }); // mode: ('right' | 'bottom' | 'undocked' | 'detach');
   mainWindow.loadURL(winURL);
 
   mainWindow.on('closed', () => {

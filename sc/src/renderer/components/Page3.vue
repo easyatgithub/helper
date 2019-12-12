@@ -1,55 +1,53 @@
 <template>
 <div>
+ 
 
-<el-col  :span="2">
-     <div class="forder">
-                        <button> <i class="glyphicon glyphicon-folder-open"></i> FF</button><br>
-                        <span class="path">D://PATH</span>
-                     </div>
+
+ <el-col  :span="2" class="list">
+<div class="list">
+          <div  :class="activeClass == index ? 'active':''"  v-for="(e ,index) in list" v-on:click='folder(index)'>
+                <i class="custom-icon el-icon-folder-checked"></i>
+                <span class="path" title="e.src"> {{e.forderName}} </span> 
+            </div>  
+              </div>              
 </el-col>
 
- <el-col  :span="18">
-<!--ppt -->
-           
-<div class="scroll" @mouseenter="on_top_enter" @mouseleave="on_top_leave">
-    <swiper :options="swiperOption" ref="mySwiper">
-      <!-- slides -->
-         <swiper-slide v-for="(e ,index) in list">
-		        <img :src="e.src" alt="banner" v-on:click='chooseImg(index)' />
-		    </swiper-slide>
-       
-      <!-- Optional controls -->
-      <div class="swiper-pagination "  slot="pagination"></div>
-      <div class="swiper-button-prev swiper-button-black" slot="button-prev"></div>
-      <div class="swiper-button-next swiper-button-black" slot="button-next"></div>
+ <el-col  :span="4">        
+         <div class="list2">
+         <div class="imglist" v-for="(e ,index) in itemList">
+                      <div class="item">
+                          <div class="item-content"> 
+                            <img  :src="e.path + '\\' +e.filename"   :data-text="e.text"  v-on:click='chooseImg(index,1)'  @mouseenter="chooseImg(index,0)"/>
+                          </div>
+                        </div> 
+            </div>
+           </div>    
+</el-col>
 
-      <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
-    </swiper> 
-      <swiper :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs" v-if="openThumbs">
-          <swiper-slide v-for="(e ,index) in list">
-              <img :src="e.src" alt="banner" v-on:click='chooseImg(index)' />
-          </swiper-slide>          
-        </swiper>
 
-     </div>
-          <!--/ppt -->
+          <el-col  :span="13">
+          <!--cur -->
+             <div class="curImg">
+                     <img   :src="curImg.path + '\\' +curImg.filename"  :data-text="curImg.text"/>
+              </div>
+          <!--/cur -->
           </el-col>
 
           <el-col  :span="4">
-           <el-button type="primary" v-model="opemStr" v-on:click='open' v-if="openThumbs">{{ opemStr }}</el-button>
-           <el-button type="primary" v-model="opemStr" v-on:click='open' v-if="!openThumbs"> 关闭缩略图</el-button>
-           <div> 
-              {{ curImg.text}}
-              <el-input
-  type="textarea"
-  :rows="20"
-  placeholder="请输入内容"
-  v-model="curImg.text">
-</el-input>
+          <el-button type="primary"@click="openHover">开启hover</el-button>
+          <el-button type="primary"@click="test">滚动播放</el-button>
+          <el-button type="primary"@click="test">{{switchName}}</el-button>
+  
+                <el-switch class="switchStyle" v-model="hover" active-color="#7958b5" active-text="开" 
+                 inactive-color="#e8e4f3" inactive-text="关">
+                </el-switch> 
+
+           <div>  {{ curImg.text}}
+              <el-input type="textarea" :rows="20" placeholder="请输入内容" v-model="curImg.text"> </el-input>
            </div>
            </el-col>
 
-  </div>
+
 
   </div>
 </template>
@@ -58,144 +56,64 @@
 import axios from 'axios';
 import moment from 'moment';  
 import './css.css' /*引入公共样式*/
-import './swiper.min.css' /*引入公共样式*/
-
-import { swiper, swiperSlide } from 'vue-awesome-swiper'  
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-  export default {
-     components: {  
-      swiper,  
-      swiperSlide  
-  },  
+   export default {
     data() {
       return {
-        list :[
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"1",
-         },
-         {
-            src:'https://picjumbo.com/wp-content/uploads/lago-di-braies-morning-2210x1473.jpg',
-           text:"2",
-         },
-         {
-           src:'https://picjumbo.com/wp-content/uploads/modern-laptop-and-watches_free_stock_photos_picjumbo_DSC05387-2210x1473.jpg',
-           text:"3",
-         },
-         {
-             src:'https://picjumbo.com/wp-content/uploads/lago-di-braies-morning-2210x1473.jpg',
-           text:"124",
-         },
-        ],
-        input: 'first',
+        hover:true,
+        switchName: '12' ,
+        activeClass :0,
+        list : this.$store.state.folders,
+        itemList:[],
         curImg: {},
-        openThumbs:false,
-        opemStr:"打开缩略图",
-         swiperOptionThumbs: {
-          spaceBetween: 10,
-          slidesPerView: 4,
-          touchRatio: 0.2,
-          loop: true,
-          loopedSlides: 5, //looped slides should be the same
-          slideToClickedSlide: true,
-        },
-        swiperOption: {  
-          _this :this,
-          autoplay: {
-              autoplay: 1500,
-              disableOnInteraction: false,//放置触摸后自动轮播停止
-          },
-          notNextTick: true,
-          //循环
-          loop:true,
-          //设定初始化时slide的索引
-          initialSlide:0,
-          //自动播放 
-          
-          autoplay: {
-              delay: 1000,
-              stopOnLastSlide: false,
-              disableOnInteraction: false, //放置触摸后自动轮播停止
-          },
-          autoplayDisableOnInteraction: false,
-           mousewheelControl: true,
-          // 设置轮播
-          effect : 'flip',
-          //滑动速度
-          speed:800,
-          //滑动方向
-          direction : 'horizontal',
-          //小手掌抓取滑动
-          grabCursor : true,
-          //滑动之后回调函数
-          on: {
-              slideChangeTransitionEnd:  ()=>{
-                if( this.swiper){
-                  this.curImg = this.list[ this.swiper.activeIndex]
-                } 
-              },
-          },
-          //左右点击
-          navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-          },
-          //分页器设置         
-          pagination: {
-              el: '.swiper-pagination',
-              clickable :true
-          }
-        },
+        input: 'first',
+        
       };
     },
       
     methods: {
       test(tab, event) {
-      
+      this.switchName="111111111111111"
       },
-      open(tab, event) {
-       console.log()
-       console.log(111111111) 
-       this.openThumbs = !this.openThumbs;
-       this.openStr = this.openThumbs==true  ?"打开缩略图":"关闭缩略图"
-       console.log(111111111) 
-       console.log(this.openStr ,this.openThumbs )
+      openHover(tab, event) {
+      this.hover = !this.hover ;
       },
-      chooseImg(index){
+        showName() {
+      return this.switchName === '1' ? '开启' : '关闭'
+    },
+       
+      folder(index){
        console.log()
-       this.curImg = this.list[index]
-       console.log(this.list[index].text)
+       this.activeClass = index;
+       this.itemList = this.list[index].items
+       console.log( this.itemList)
+      },
+
+      chooseImg(index,kind){
+       console.log()
+       if(kind){
+         this.curImg = this.itemList[index]
+       } else{
+         if(this.hover){
+            this.curImg = this.itemList[index]
+         }
+       }
+
+
+       console.log(this.itemList[index].text)
        console.log(index)
       },
-      //通过获得的swiper对象来暂停自动播放
-            on_top_enter() { 
-                this.swiper.autoplay.stop()
-                this.myBotSwiper.autoplay.stop()
-            },
-            on_top_leave() { 
-                this.swiper.autoplay.start()
-            }
       
     },
-    computed: {  
-    swiper() {  
-      return this.$refs.mySwiper.swiper;  
-    }  ,
-            myBotSwiper() {
-                return this.$refs.swiperThumbs.swiper
-            } 
-  }, 
      mounted() {
-       console.log("page3",this.globalData)
-       this.list = this.list.concat(this.list)
-       this.list = this.list.concat(this.list)
-       this.list = this.list.concat(this.list)
-       this.curImg = this.list[0]
-        // const swiperTop = this.$refs.mySwiper.swiper
-        // const swiperThumbs = this.$refs.swiperThumbs.swiper
-        // swiperTop.controller.control = swiperThumbs
-        // swiperThumbs.controller.control = swiperTop
+      console.log("page1",this.globalData)
+      //  this.list = this.list.concat(this.list)
+      //  this.list = this.list.concat(this.list)
+      //  this.list = this.list.concat(this.list)
+        this.itemList = this.list[0].items
+        console.log(this.itemList,)
+       this.curImg = this.itemList[0]
      }
   };
 </script>
@@ -203,56 +121,38 @@ const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
  
 
 <style lang="scss" scoped>
- 
-  .waterfall {
-    column-count: 4;
-    column-gap: 0;
-  }
+.path{
+  width:50px;
+     display: inline-block; overflow: hidden; text-overflow:ellipsis; white-space: nowrap;
+}
 
-  .item {
-    break-inside: avoid;
-    padding: 10px;
-  }
-
-  .item-content {
-    /* padding: 10px; */
-    font-size: 20px;
-    text-align: center;
-    color: #686868;
-    border: 1px solid #ccc;
-  }
-  img {
+.forder{ width: 100px;height: 70px;margin: 5px; border: #000 1px solid; border-radius: 5px;}
+.imglist{ width: 100%;height: 70px;}
+   img {
     max-width: 100%;
     max-height: 100%;
   }
-  .overflow-auto{
-    overflow :auto;
-     max-width: 100%;
-    height: 500px;
-  }
 
-   img{
-        height: 100%;
-        width: 100%;
-    }
- 
-.swiper-slide-top{
-  height:500px;
-    overflow :auto;
-     max-width: 100%;
-    height: 500px;
+ .switchStyle .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
 }
-.swiper-slide-botton{
-  height:500px;
-    overflow :auto;
-     max-width: 100%;
-    height: 500px;
+.switchStyle .el-switch__label--left {
+  z-index: 9;
+  left: 6px;
+}
+.switchStyle .el-switch__label--right {
+  z-index: 9;
+  left: -14px;
+}
+.switchStyle .el-switch__label.is-active {
+  display: block;
+}
+.switchStyle.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 50px !important;
 }
 
 
- .overflow-auto{
-    overflow :auto;
-     max-width: 100%;
-    height: 500px;
-  }
 </style>
