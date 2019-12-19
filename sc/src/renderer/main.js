@@ -12,6 +12,7 @@ import axios from 'axios';
 import App from './App';
 
 import bobi from "../utils/db";
+import lowdb from "../utils/lowdb";
 
 import globalData from "./globalData";
 
@@ -45,6 +46,7 @@ Viewer.setDefaults({
     "keyboard": true, //是否支持键盘
     "url": "data-source",
     ready: function (e) {
+      document.querySelector(".viewer-container").style.height ="500px"
       console.log(e.type,'组件以初始化');
     },
     show: function (e) {
@@ -84,7 +86,8 @@ Viewer.setDefaults({
 
 const store = new Vuex.Store({
   state: {
-    count: 0,
+    db:lowdb,  // Store 居然是能綁定狀態的
+    curStyleChoose: 1,
     data:{
       s:[1,2,3,4]
     },
@@ -174,3 +177,4 @@ bobi.find({ objName: "folder" }, function(err, data) {
   }
 });
 
+// lowdb.set("my",{})

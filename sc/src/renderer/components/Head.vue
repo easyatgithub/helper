@@ -1,173 +1,216 @@
 <template>
-<div>
-<el-row style="padding-right:10px">
- 
- 
-  <el-col :span="23"> 
-   
- 
-    <el-tabs style="height: 200px;" @tab-click="handleClick">
-    <el-tab-pane label="幻灯片风格"> 
-    
-    <Page1/>
-    </el-tab-pane>
-    <el-tab-pane label="瀑布流风格">
-      <Page2/>
-    </el-tab-pane>
-    
-    <el-tab-pane label="文件夹风格">
-      <Page3/>
-    </el-tab-pane>
-    <el-tab-pane label="管理界面"> 
-    <Page4/>
-    </el-tab-pane>
-  </el-tabs>
- 
- 
-  </el-col>
+  <div>
+    <el-row style="padding-right:10px">
 
-    <el-col :span="1">   <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">
-      <i class="el-icon-share"></i>
-  </el-button>
- </el-col>
+      <el-col :span="23">
 
-</el-row>
+        <el-tabs
+          style="height: 200px;"
+          @tab-click="handleClick"
+        >
+          <el-tab-pane label="幻灯片风格">
 
+            <Page1 />
+          </el-tab-pane>
+          <el-tab-pane label="瀑布流风格">
+            <Page2 />
+          </el-tab-pane>
 
+          <el-tab-pane label="文件夹风格">
+            <Page3 />
+          </el-tab-pane>
+          <el-tab-pane label="管理界面">
+            <Page4 />
+          </el-tab-pane>
+        </el-tabs>
 
- <el-drawer title="提示模块" :visible.sync="drawer">
-    <el-row :gutter="20">
-        <el-col :span="12">  <el-button  @click="test">打开文件夹</el-button> </el-col> </BR>
+      </el-col>
+
+      <el-col :span="1">
+        <el-button
+          @click="drawer = true"
+          type="primary"
+          style="margin-left: 16px;"
+        >
+          <i class="el-icon-share"></i>
+        </el-button>
+      </el-col>
+
     </el-row>
-    <el-row :gutter="20">
-        <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
-    </el-row>
-    
-    
-</el-drawer>
 
+    <el-drawer
+      title="小助手"
+      :visible.sync="drawer"
+    >
+      <div class="rightArea">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-button @click="test">打开文件夹</el-button>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-input
+            placeholder="找找圖片"
+            v-model="input"
+            class="search-file-input"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+            ></el-button>
+          </el-input>
+        </el-row>
+        <el-row :gutter="20">
+
+          <div class="result-list">
+            <div
+              :class="activeClass == index ? 'active':''"
+              v-for="(e ,index) in list"
+              v-on:click='choose(index)'
+            >
+              <i class="custom-icon el-icon-folder-checked"></i>
+              <span
+                class="path"
+                title="e.src"
+              > {{e.name}} </span>
+            </div>
+          </div>
+
+        </el-row>
+
+      </div>
+
+    </el-drawer>
 
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import moment from 'moment';  
-import Page1 from '@/components/Page1';
-import Page2 from '@/components/Page2';
-import Page3 from '@/components/Page3';
-import Page4 from '@/components/Page4';
-import './css.css' /*引入公共样式*/
+import axios from "axios";
+import moment from "moment";
+import Page1 from "@/components/Page1";
+import Page2 from "@/components/Page2";
+import Page3 from "@/components/Page3";
+import Page4 from "@/components/Page4";
+import "./css.css"; /*引入公共样式*/
 
 import db from "../../utils/db";
 import globalData from "../globalData";
 const { remote, ipcRenderer } = window.require("electron");
 
-      const fs = require("fs");
-      const sizeOf = require("image-size");
+const fs = require("fs");
+const sizeOf = require("image-size");
 
-const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-  export default {
-    data() {
-      return {
-         drawer: false,
-        activeName: 'first',
-        input: 'first',
-        list:[]
-      };
+const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
+export default {
+  data() {
+    return {
+      drawer: false,
+      activeName: "first",
+      input: "",
+      activeClass:0,
+      list: [
+        {src:"111",name:"111"},
+        {src:"1112222",name:"222"},
+        {src:"11122233333",name:"333"},
+      ]
+    };
+  },
+  components: {
+    Page1,
+    Page2,
+    Page3,
+    Page4
+  },
+  methods: {
+    // tab 切换的的时候会从全局数据里面更新文件夹
+    handleClick(tab, event) {
+      console.log(tab, event);
+      var all = JSON.parse(localStorage.getItem("all"));
+      console.log("all");
+      console.log(all);
+      this.COMMON.data = all;
     },
-      components: {
-      Page1,
-      Page2,
-      Page3,
-      Page4,
+    async test(tab, event) {
+      ipcRenderer.send("open-file-dialog");
     },
-    methods: {
-      // tab 切换的的时候会从全局数据里面更新文件夹
-      handleClick(tab, event) {
-        console.log(tab, event);
-        var all = JSON.parse(localStorage.getItem('all'));
-        console.log("all")
-        console.log(all)
-        this.COMMON.data=all 
-        
-      },
-      async test(tab, event) {
-       ipcRenderer.send("open-file-dialog");
-       
-      },
-      async test1( ) {
-       
-      },
-    }
-  };
+      choose(index) {
+      console.log("choose()",index);
+      this.activeClass = index;  
+    },
+    async test1() {}
+  }
+};
 
-  /////////////////////
+/////////////////////
 
 ipcRenderer.on("selected-directory", async (event, path) => {
-    const name = path[0].slice(path[0].lastIndexOf("/") + 1);
-    var items = getFileList(name);
-    var data = await db.find({ objName: "folder" })
-    var forderValue = data[0].objValue;
-      var firstTime =  Date.now();
-      // 
-      console.log(data[0]._id, forderValue.hasOwnProperty(name));
-      if (forderValue.hasOwnProperty(name)) {
-        console.log("再次打开这个文件夹");
-        firstTime = forderValue[name].firstTime;
-      }
-      // for forder update items
-      forderValue[name] = {
-        firstTime: firstTime ,
-        lasrTime: Date.now(),
-        items: items
-      };
-      console.log("新的值");
-      forderValue = JSON.parse(JSON.stringify(forderValue)); // nedb 的bug 不能使用原对象需要 深拷贝
-      localStorage.setItem('all',JSON.stringify({ objName: "folder", objValue: forderValue}));
-      data = await db.update( {_id:data[0]._id},{ $set: { objValue: forderValue } },{ multi: false},)
-
-})
-
-  /////////////////
-  function getFileList(path){
-    var s=[]
-   readFileList (path,s) 
-   return s
+  const name = path[0].slice(path[0].lastIndexOf("/") + 1);
+  var items = getFileList(name);
+  var data = await db.find({ objName: "folder" });
+  var forderValue = data[0].objValue;
+  var firstTime = Date.now();
+  //
+  console.log(data[0]._id, forderValue.hasOwnProperty(name));
+  if (forderValue.hasOwnProperty(name)) {
+    console.log("再次打开这个文件夹");
+    firstTime = forderValue[name].firstTime;
   }
-  
+  // for forder update items
+  forderValue[name] = {
+    firstTime: firstTime,
+    lasrTime: Date.now(),
+    items: items
+  };
+  console.log("新的值");
+  forderValue = JSON.parse(JSON.stringify(forderValue)); // nedb 的bug 不能使用原对象需要 深拷贝
+  localStorage.setItem(
+    "all",
+    JSON.stringify({ objName: "folder", objValue: forderValue })
+  );
+  data = await db.update(
+    { _id: data[0]._id },
+    { $set: { objValue: forderValue } },
+    { multi: false }
+  );
+});
 
-  function readFileList(path, filesList) {
-    var files = fs.readdirSync(path);
-    files.forEach(function(itm, index) {
-      var stat = fs.statSync(path + "/" + itm);
-      if (stat.isDirectory()) {
-        readFileList(path + "/" + itm + "/", filesList);
-      } else {
-        var obj = {}; //定义一个对象存放文件的路径和名字
-        obj.path = path; //路径
-        obj.filename = itm; //名字
+/////////////////
+function getFileList(path) {
+  var s = [];
+  readFileList(path, s);
+  return s;
+}
 
-        var suffix = itm.substr(itm.length - 4).toLowerCase();
-        if (
-          suffix === ".png" ||
-          suffix === ".png" ||
-          suffix === ".ico" ||
-          suffix === ".gif" ||
-          suffix === ".jpg"
-        ) {
-          var dimensions = sizeOf(obj.path + "/" + obj.filename);
-          obj.width = dimensions.width;
-          obj.height = dimensions.height;
-          obj.type = "img";
-          filesList.push(obj);
-        }
+function readFileList(path, filesList) {
+  var files = fs.readdirSync(path);
+  files.forEach(function(itm, index) {
+    var stat = fs.statSync(path + "/" + itm);
+    if (stat.isDirectory()) {
+      readFileList(path + "/" + itm + "/", filesList);
+    } else {
+      var obj = {}; //定义一个对象存放文件的路径和名字
+      obj.path = path; //路径
+      obj.filename = itm; //名字
+
+      var suffix = itm.substr(itm.length - 4).toLowerCase();
+      if (
+        suffix === ".png" ||
+        suffix === ".png" ||
+        suffix === ".ico" ||
+        suffix === ".gif" ||
+        suffix === ".jpg"
+      ) {
+        var dimensions = sizeOf(obj.path + "/" + obj.filename);
+        obj.width = dimensions.width;
+        obj.height = dimensions.height;
+        obj.type = "img";
+        filesList.push(obj);
       }
-    });
-  }
-
+    }
+  });
+}
 </script>
 
  
@@ -194,10 +237,10 @@ ipcRenderer.on("selected-directory", async (event, path) => {
 .el-alert {
   margin: 16px 0;
 }
-.el-tab-pane{
-  overflow:auto
+.el-tab-pane {
+  overflow: auto;
 }
-.el-row{
-  margin:10px
+.el-row {
+  margin: 10px;
 }
 </style>

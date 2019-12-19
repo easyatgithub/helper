@@ -230,6 +230,8 @@ export default {
   },
   mounted() {
     console.log("page1", this.globalData);
+    this.$store.state.db.set("m1y",{})
+    console.log("page1", this.globalData);
     this.list = this.list.concat(this.list);
     this.list = this.list.concat(this.list);
     this.list = this.list.concat(this.list);
