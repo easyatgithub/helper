@@ -7,6 +7,13 @@ auto/build/
 auto/dist/
 auto/log/
 
+
+diary/package-lock.json
+diary/node_modules/
+diary/build/
+diary/dist/
+diary/log/
+
 sc/package-lock.json
 sc/node_modules/
 sc/build/
