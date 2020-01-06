@@ -8,10 +8,14 @@
           style="height: 200px;"
           @tab-click="handleClick"
         >
+          
+          <el-tab-pane label="小游戏">
+            <Page2 />
+          </el-tab-pane> 
+
           <el-tab-pane label="日历记事本">
             <Page1 />
           </el-tab-pane> 
-          
         </el-tabs>
 
       </el-col>

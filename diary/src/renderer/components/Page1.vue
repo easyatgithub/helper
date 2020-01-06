@@ -53,7 +53,7 @@ export default {
       text:"111111111333333333333333",
     },
        */
-       data: this.$store.state.data,
+       data: this.$store.state.data.my,
        day :"",
        text:"",
     };

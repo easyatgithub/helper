@@ -1,162 +1,278 @@
 <template>
   <div>
-
     <el-col
-      :span="2"
-      class="list"
+      :span="8"
+      class="days"
     >
-      <div class="list">
-        <div
-          :class="activeClass == index ? 'active':''"
-          v-for="(e ,index) in list"
-          v-on:click='folder(index)'
-        >
-          <i class="custom-icon el-icon-folder-checked"></i>
-          <span
-            class="path"
-            title="e.src"
-          > {{e.forderName}} </span>
-        </div>
-      </div>
-    </el-col>
-
-    <el-col :span="18">
-      <!--flow -->
-
-      </el-popover>
-      <div class="overflow-auto">
-        <div class="waterfall">
-
-          <div v-for="(e ,index) in itemList">
-            <div class="item">
-              <div class="item-content">
-                <img
-                  :src="e.path + '\\' +e.filename"
-                  :data-text="e.filename"
-                  v-on:click='chooseImg(index)'
-                />
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-      <viewer
-        :images="fullScreenImgs"
-        style="height: 300px;"
-        v-if="isFullScreen"
+      历史旗号
+      <el-input
+        placeholder="添加新一期"
+        v-model="input2"
       >
-        <img
-          v-for="item in fullScreenImgs"
-          :src="item.path + '\\' +item.filename"
-          :key="item.index"
-          height="100"
-        >
-      </viewer>
+        <template slot="append">添加</template>
+      </el-input>
 
-      <!--/flow -->
+      <el-table
+        :data="history"
+        style="width: 100%"
+        @row-click="openDetails"
+      >
+        <el-table-column
+          prop="id"
+          label="次数"
+        ></el-table-column>
+        <el-table-column
+          prop="code"
+          label="code"
+        ></el-table-column>
+      </el-table>
+    </el-col>
+    <el-col
+      :span="8"
+      class="days"
+    >
+      我的期号
+      <el-table
+        :data="myhistory"
+        style="width: 100%"
+        @row-click="openmyDetails"
+      >
+        <el-table-column
+          prop="id"
+          label="次数"
+        ></el-table-column>
+        <el-table-column
+          prop="code"
+          label="code"
+        ></el-table-column>
+      </el-table>
     </el-col>
 
-    <el-col :span="4">
+    <el-col :span="8">
+      {{this.day}}
+      <el-input
+        type="textarea"
+        :rows="5"
+        placeholder="请输入内容"
+        v-model="text"
+      ></el-input>
       <el-button
-        plain
-        circle
-        icon="custom-icon el-icon-refresh"
-        v-on:click='test()'
-      ></el-button>
-      <div>
-        {{ curImg.text}}
-        <el-input
-          type="textarea"
-          :rows="20"
-          placeholder="请输入内容"
-          v-model="curImg.text"
-        >
-        </el-input>
-      </div>
+        type="primary"
+        @click="clear"
+      >清除</el-button>
+      <el-button
+        type="primary"
+        @click="save"
+      >保存</el-button>
+
+      <el-button
+        type="primary"
+        @click="randomssq"
+      >随机</el-button>
+
+      <el-button
+        type="primary"
+        @click="systemssq"
+      >机选</el-button>
+      <hr />红球
+      <div
+        :class="e.choose  ==true  ? 'redball':'ball'"
+        v-for="(e ,index) in redlist"
+        v-on:click="chooseRed(index)"
+      >{{e.index}}</div>
+      <br />蓝球
+      <div
+        :class="e.choose ==true ? 'blueball':'ball'"
+        v-for="(e ,index) in bluelist"
+        v-on:click="chooseBlue(index)"
+      >{{e.index}}</div>
+      <br />期号故事
+      <el-input
+        type="textarea"
+        :rows="5"
+        placeholder="请输入内容"
+        v-model="text"
+      ></el-input>
     </el-col>
-
-  </div>
-
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import moment from "moment";
-import "./css.css"; /*引入公共样式*/
+import axios from "axios"
+import moment from "moment"
+import "./css.css" /*引入公共样式*/
+import "./swiper.min.css" /*引入公共样式*/
 
-const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
+import { FullCalendar } from "vue-fullcalendar"
+
+const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss"
 export default {
+  components: {},
   data() {
     return {
-      activeClass: 0,
-      list: this.$store.state.folders,
-      itemList: [],
-      curImg: {},
-      isFullScreen: false,
-      fullScreenImgs: [],
-      input: "first"
-    };
+      redlist: [],
+      bluelist: [],
+      curRed: [],
+      curBlue: {},
+      input2: "",
+      // data: this.$store.state.data,
+      random: [],
+      system: [],
+      history: this.$store.state.data.history,
+      curHistoryIndex: 0,
+      myhistory: [],
+      day: "",
+      text: ""
+    }
   },
 
   methods: {
-    test(tab, event) {
-      console.log();
-      console.log(this.data);
+    openDetails(row, index) {
+      console.log(row, index)
+      this.myhistory = row.myhistory
+      this.curHistoryIndex = row.id
     },
-    chooseImg(index) {
-      console.log(this.itemList);
-      this.curImg = this.itemList[index];
-      console.log(this.itemList[index].text);
-      console.log(index);
-      this.isFullScreen = true;
-      // this.fullScreenImgs =this.itemList
-      this.fullScreenImgs = this.itemList
-        .slice(index, this.itemList.length)
-        .concat(this.itemList.slice(0, index));
+    openmyDetails(row) {
+      console.log(row)
+      this.input2 = row.code
     },
-    folder(index) {
-      console.log(index);
-      this.activeClass = index;
-      this.itemList = this.list[index].items;
-      console.log(this.itemList);
-      this.isFullScreen = false;
+
+    clear() {
+      this.text = ""
+    },
+    save() {
+      const result = this.history.map(item => {
+        if (item.id === this.curHistoryIndex) {
+          item.myhistory = this.myhistory
+        }
+        return item
+      })
+      // 不要去更新 地址 只更新 值
+      this.history = result
+      // this.history.length = 0
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>.")
+      console.log(result)
+
+      this.$store.state.save()
+    },
+    chooseRed(index) {
+      this.redlist[index].choose = !this.redlist[index].choose
+      // this.curRed.push(this.redlist[index])
+      this.curRed = this.redlist.filter(function(item) {
+        if (item.choose) {
+          return item
+        }
+      })
+      console.log(this.curRed)
+    },
+    chooseBlue(index) {
+      for (var i = 0; i < this.bluelist.length; i++) {
+        this.bluelist[i].choose = false
+      }
+      this.bluelist[index].choose = !this.bluelist[index].choose
+      this.curBlue = this.bluelist[index]
+    },
+    ssq() {
+      var x = []
+      var arr = []
+      for (var i = 0; i < 33; i++) {
+        arr[i] = i + 1
+      }
+
+      while (x.length < 6) {
+        var index = -~(Math.random() * arr.length)
+        if (arr[index]) {
+          x.push(arr[index])
+          delete arr[index]
+        }
+      }
+      x.push(-~(Math.random() * 16))
+      return x
+    },
+    randomssq() {
+      this.random = this.ssq()
+      this.text = JSON.stringify(this.random)
+      this.myhistory.push({
+        id: Date.now(),
+        code: JSON.stringify(this.random),
+        story: ""
+      })
+    },
+    systemssq() {
+      this.system = []
+      for (var i = 0; i < 5; i++) {
+        var x = this.ssq()
+        this.system.push(x)
+        this.myhistory.push({
+          id: i,
+          code: JSON.stringify(x),
+          story: ""
+        })
+      }
+      this.text = JSON.stringify(this.system)
     }
   },
+  components: {
+    "full-calendar": require("vue-fullcalendar")
+  },
+  computed: {},
   mounted() {
-    console.log("page2");
-    console.log(this.list);
+    for (var i = 1; i <= 33; i++) {
+      this.redlist.push({
+        index: i,
+        choose: false
+      })
+    }
+    for (var i = 1; i <= 16; i++) {
+      this.bluelist.push({
+        index: i,
+        choose: false
+      })
+    }
+    console.log(".------------------------------PAGE2")
+    console.log(this.history)
 
-    this.itemList = this.list[0].items;
-    console.log(this.itemList);
+    // this.$store.state.save()
   }
-};
+}
 </script>
-<style lang="scss" scoped>
-.waterfall {
-  column-count: 4;
-  column-gap: 0;
-}
-.item {
-  break-inside: avoid;
-  padding: 10px;
-}
 
-.item-content {
-  /* padding: 10px; */
-  font-size: 20px;
+ 
+
+<style lang="scss" scoped>
+.redball {
+  color: red;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  border: 1px solid;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 100;
+  display: inline-block;
   text-align: center;
-  color: #686868;
-  border: 1px solid #ccc;
 }
-img {
-  max-width: 100%;
-  max-height: 100%;
+.blueball {
+  color: blue;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  border: 1px solid;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 100;
+  display: inline-block;
+  text-align: center;
 }
-.overflow-auto {
-  overflow: auto;
-  max-width: 100%;
-  height: 500px;
+.ball {
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  border: 1px solid;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 100;
+  display: inline-block;
+  text-align: center;
 }
 </style>
