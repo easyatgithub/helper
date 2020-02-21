@@ -32,6 +32,8 @@ function createWindow() {
     y: 0,
     width: size.width * 1,
     height: size.height, // Math.floor(* 1),
+    transparent: true,
+    frame: false, //透明化 方案 結合 css
     fullscreen: false,
     resizable: true, // 上面参数用于客户化设置
     webPreferences: {

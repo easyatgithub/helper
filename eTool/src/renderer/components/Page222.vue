@@ -115,4 +115,8 @@ export default {
     width: 95%;
   }
 }
+html,
+body {
+  background: rgba(0, 0, 0, 0);
+}
 </style>
