@@ -14,6 +14,12 @@ diary/build/
 diary/dist/
 diary/log/
 
+eTool/package-lock.json
+eTool/node_modules/
+eTool/build/
+eTool/dist/
+eTool/log/
+
 sc/package-lock.json
 sc/node_modules/
 sc/build/
