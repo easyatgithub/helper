@@ -79,7 +79,7 @@
     "moment": "^2.24.0",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
-    "qs": "^6.7.0",
+    "qs": "^6.7.3",
     "regedit": "^3.0.3",
     "selenium-webdriver": "^3.6.0",
     "sqlite3": "^4.1.0",
